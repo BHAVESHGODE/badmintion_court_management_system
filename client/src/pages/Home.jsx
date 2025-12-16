@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../utils/api';
 import BookingModal from '../components/BookingModal';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Zap, Trophy, Shield, Activity, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { Zap, Trophy, Shield, Activity, ArrowRight, ArrowUpRight, RefreshCw, AlertCircle } from 'lucide-react';
 import StarRating from '../components/StarRating';
 
 const Home = () => {
@@ -13,7 +13,7 @@ const Home = () => {
     const y1 = useTransform(scrollY, [0, 500], [0, 200]);
     const y2 = useTransform(scrollY, [0, 500], [0, -150]);
 
-    const { data: courts, isLoading } = useQuery({
+    const { data: courts, isLoading, isError, error, refetch } = useQuery({
         queryKey: ['courts'],
         queryFn: async () => {
             const res = await api.get('/courts');
@@ -132,9 +132,24 @@ const Home = () => {
                         <div className="flex justify-center h-64 items-center">
                             <div className="w-16 h-16 border-4 border-brand-lime border-t-transparent rounded-full animate-spin"></div>
                         </div>
+                    ) : isError ? (
+                        <div className="flex flex-col items-center justify-center h-64 text-center border border-red-500/30 rounded-3xl bg-red-500/5 p-8">
+                            <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+                            <h3 className="text-2xl font-bold text-red-500 mb-2">Failed to load courts</h3>
+                            <p className="text-gray-400 mb-6 max-w-md">
+                                {error?.message || "There was an issue connecting to the stadium servers."}
+                            </p>
+                            <button
+                                onClick={() => refetch()}
+                                className="flex items-center space-x-2 px-6 py-3 bg-dark-800 border border-white/10 rounded-xl hover:bg-dark-700 transition-colors"
+                            >
+                                <RefreshCw className="w-4 h-4" />
+                                <span>Retry Connection</span>
+                            </button>
+                        </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                            {courts && courts.map((court, idx) => (
+                            {courts && courts.length > 0 ? courts.map((court, idx) => (
                                 <motion.div
                                     initial={{ opacity: 0, y: 50 }}
                                     whileInView={{ opacity: 1, y: 0 }}
@@ -207,7 +222,11 @@ const Home = () => {
                                         </div>
                                     </div>
                                 </motion.div>
-                            ))}
+                            )) : (
+                                <div className="col-span-3 text-center py-20 bg-white/5 rounded-3xl border border-white/10">
+                                    <p className="text-xl text-gray-400">No courts currently available in the database.</p>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
