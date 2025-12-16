@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['Montserrat', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            primary: {
+              DEFAULT: '#0A2463', // Deep Navy Blue
+              light: '#15327a',
+              dark: '#051233'
+            },
+            accent: {
+              green: '#39FF14', // Neon Green
+              orange: '#FF5E00', // Vibrant Orange
+            },
+            dark: {
+              950: '#050505', // Ultra dark bg
+              900: '#0a0a0a',
+              800: '#171717',
+              700: '#262626',
+            },
+            brand: {
+              lime: '#39FF14',
+              violet: '#7c3aed',
+              pink: '#FF5E00',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
+</html>
