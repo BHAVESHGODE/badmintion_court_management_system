@@ -11,7 +11,7 @@
 
 1.  **Clone the repository**:
     ```bash
-    git clone <repo-url>
+    git clone <https://github.com/BHAVESHGODE/badmintion_court_management_system>
     cd badminton-court-management-system
     ```
 
