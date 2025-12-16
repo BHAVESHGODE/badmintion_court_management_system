@@ -3,6 +3,8 @@ const dotenv = require('dotenv');
 const User = require('../models/User');
 const Court = require('../models/Court');
 const PricingRule = require('../models/PricingRule');
+const Coach = require('../models/Coach');
+const Equipment = require('../models/Equipment');
 const connectDB = require('../config/db');
 
 dotenv.config();
@@ -30,6 +32,33 @@ const rules = [
     },
 ];
 
+const coaches = [
+    {
+        name: 'Mike Smith',
+        hourlyRate: 300,
+        specialization: 'Singles Tactics',
+        availability: [
+            { day: 'Monday', slots: [{ startTime: '18:00', endTime: '21:00' }] },
+            { day: 'Wednesday', slots: [{ startTime: '18:00', endTime: '21:00' }] }
+        ]
+    },
+    {
+        name: 'Sarah Jones',
+        hourlyRate: 400,
+        specialization: 'Doubles Strategy',
+        availability: [
+            { day: 'Saturday', slots: [{ startTime: '09:00', endTime: '13:00' }] },
+            { day: 'Sunday', slots: [{ startTime: '09:00', endTime: '13:00' }] }
+        ]
+    }
+];
+
+const equipment = [
+    { name: 'Yonex Astrox 99', type: 'racket', quantity: 10, price: 50, status: 'available' },
+    { name: 'Li-Ning T-Shirt', type: 'shoes', quantity: 5, price: 100, status: 'available' }, // Assuming shoes/apparel
+    { name: 'Mavis 350 Shuttlecock', type: 'shuttlecock', quantity: 50, price: 200, status: 'available' }
+];
+
 const seedData = async () => {
     try {
         await connectDB();
@@ -37,11 +66,12 @@ const seedData = async () => {
         await User.deleteMany();
         await Court.deleteMany();
         await PricingRule.deleteMany();
+        await Coach.deleteMany();
+        await Equipment.deleteMany();
 
         const admin = await User.create({
             name: 'Admin User',
             email: 'admin@example.com',
-            password: 'password123',
             password: 'password123',
             role: 'admin',
             bio: 'Head of Operations. I love badminton!',
@@ -53,15 +83,19 @@ const seedData = async () => {
             name: 'John Doe',
             email: 'user@example.com',
             password: 'password123',
-            password: 'password123',
             role: 'user',
             bio: 'Just started playing. Looking for partners.',
             skillLevel: 'Beginner',
             membershipTier: 'Silver'
         });
 
-        await Court.insertMany(courts);
+        // Add owner to courts
+        const courtsWithOwner = courts.map(court => ({ ...court, owner: admin._id }));
+
+        await Court.insertMany(courtsWithOwner);
         await PricingRule.insertMany(rules);
+        await Coach.insertMany(coaches);
+        await Equipment.insertMany(equipment);
 
         console.log('Data Imported!');
         process.exit();
@@ -77,6 +111,8 @@ const destroyData = async () => {
         await User.deleteMany();
         await Court.deleteMany();
         await PricingRule.deleteMany();
+        await Coach.deleteMany();
+        await Equipment.deleteMany();
 
         console.log('Data Destroyed!');
         process.exit();
